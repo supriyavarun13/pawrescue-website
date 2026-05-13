@@ -1333,13 +1333,56 @@
     document.getElementById('customAmount').value = '';
   }
 
-  function handleDonate() {
-    const active = document.querySelector('.amount-btn.active');
-    const custom = document.getElementById('customAmount').value;
-    const amount = custom || (active ? active.textContent.trim().split('\n')[0] : '£25');
-    const tab = document.querySelector('.give-tab.active').textContent.trim();
-    alert(`Thank you! Processing your ${tab.toLowerCase()} donation of ${amount}.\n\nIn a live implementation, this would open a Salesforce Giving Page checkout flow.`);
+let currentTab = 'once';
+
+function setTab(type, btn) {
+  document.querySelectorAll('.give-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentTab = type;
+}
+
+function selectAmount(btn) {
+  document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('customAmount').value = '';
+}
+
+async function handleDonate() {
+  const activeBtn   = document.querySelector('.amount-btn.active');
+  const customInput = document.getElementById('customAmount').value.replace(/[^0-9]/g, '');
+  const amountStr   = customInput || (activeBtn ? activeBtn.textContent.replace(/[^0-9]/g, '') : '25');
+  const amount      = parseInt(amountStr, 10);
+
+  if (!amount || amount < 1) {
+    alert('Please enter a donation amount.');
+    return;
   }
+
+  const btn = document.querySelector('.donate-cta');
+  btn.textContent = 'Redirecting…';
+  btn.disabled = true;
+
+  try {
+    const response = await fetch('/.netlify/functions/create-checkout-session', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ amount, donationType: currentTab }),
+    });
+
+    const data = await response.json();
+
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      throw new Error(data.error || 'No checkout URL returned.');
+    }
+  } catch (err) {
+    console.error('Checkout error:', err);
+    alert('Sorry, something went wrong. Please try again.');
+    btn.textContent = 'Donate Securely →';
+    btn.disabled = false;
+  }
+}
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
