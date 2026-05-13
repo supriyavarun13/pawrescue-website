@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PawRescue — Every Life Matters</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #F7F1E8;
+    --cream-dark: #EDE4D4;
+    --terra: #C04D26;
+    --terra-light: #E07248;
+    --terra-deep: #8B3418;
+    --forest: #2C5F2E;
+    --forest-light: #4A8C4D;
+    --forest-pale: #EAF2EA;
+    --bark: #3A2C22;
+    --bark-mid: #6B5144;
+    --bark-light: #A08070;
+    --sand: #D4B896;
+    --amber: #E8A030;
+    --white: #FDFAF5;
+    --font-head: 'Lora', Georgia, serif;
+    --font-body: 'DM Sans', system-ui, sans-serif;
+    --radius: 12px;
+    --radius-lg: 20px;
+    --shadow: 0 4px 24px rgba(58,44,34,0.10);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--cream);
+    color: var(--bark);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── BADGE ── */
+  .npc-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 30px;
+    background: #0176D3;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .npc-badge svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--white);
+    border-bottom: 1.5px solid var(--cream-dark);
+    padding: 0 5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 68px;
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    font-family: var(--font-head);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--bark);
+  }
+  .nav-logo-icon {
+    width: 38px;
+    height: 38px;
+    background: var(--terra);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 36px;
+    list-style: none;
+  }
+  .nav-links a {
+    text-decoration: none;
+    color: var(--bark-mid);
+    font-size: 15px;
+    font-weight: 500;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--terra); }
+  .nav-cta {
+    background: var(--terra);
+    color: var(--white) !important;
+    padding: 10px 22px;
+    border-radius: 30px;
+    font-weight: 600 !important;
+    transition: background .2s !important;
+  }
+  .nav-cta:hover { background: var(--terra-deep) !important; color: #fff !important; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 88vh;
+    background: linear-gradient(160deg, var(--bark) 0%, #5A3520 60%, #7A4830 100%);
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding: 80px 5% 80px;
+  }
+  .hero-bg-pattern {
+    position: absolute;
+    inset: 0;
+    opacity: .04;
+    background-image: radial-gradient(circle, var(--cream) 1.5px, transparent 1.5px);
+    background-size: 36px 36px;
+  }
+  .hero-accent {
+    position: absolute;
+    right: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 52%;
+    max-width: 680px;
+    aspect-ratio: 1;
+    border-radius: 50% 50% 50% 42% / 50% 50% 44% 50%;
+    background: linear-gradient(135deg, rgba(192,77,38,0.30) 0%, rgba(44,95,46,0.20) 100%);
+    animation: morph 8s ease-in-out infinite alternate;
+  }
+  @keyframes morph {
+    0% { border-radius: 50% 50% 50% 42% / 50% 50% 44% 50%; }
+    100% { border-radius: 42% 58% 46% 54% / 58% 42% 56% 44%; }
+  }
+  .hero-pet-silhouette {
+    position: absolute;
+    right: 4%;
+    bottom: 0;
+    width: 42%;
+    max-width: 520px;
+    opacity: .18;
+  }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 600px;
+  }
+  .hero-eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--terra-light);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .hero-eyebrow::before { content: ''; display: block; width: 32px; height: 2px; background: var(--terra-light); }
+  .hero h1 {
+    font-family: var(--font-head);
+    font-size: clamp(38px, 5.5vw, 68px);
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 1.12;
+    margin-bottom: 24px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--terra-light);
+  }
+  .hero p {
+    font-size: 18px;
+    color: rgba(247,241,232,0.75);
+    max-width: 480px;
+    margin-bottom: 40px;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+  .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--terra);
+    color: var(--cream);
+    padding: 14px 32px;
+    border-radius: 40px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background .2s, transform .15s;
+  }
+  .btn-primary:hover { background: var(--terra-deep); transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent;
+    color: var(--cream);
+    padding: 14px 32px;
+    border-radius: 40px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 500;
+    border: 1.5px solid rgba(247,241,232,0.4);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: border-color .2s, background .2s;
+  }
+  .btn-outline:hover { border-color: var(--cream); background: rgba(247,241,232,0.08); }
+  .hero-stats {
+    margin-top: 56px;
+    display: flex;
+    gap: 40px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(247,241,232,0.15);
+  }
+  .hero-stat { }
+  .hero-stat-num {
+    font-family: var(--font-head);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 1;
+  }
+  .hero-stat-label {
+    font-size: 12px;
+    color: rgba(247,241,232,0.55);
+    margin-top: 4px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+
+  /* ── SECTION SHARED ── */
+  section { padding: 96px 5%; }
+  .section-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: var(--font-head);
+    font-size: clamp(28px, 3.5vw, 42px);
+    font-weight: 700;
+    color: var(--bark);
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+  .section-sub {
+    font-size: 17px;
+    color: var(--bark-mid);
+    max-width: 560px;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+  .section-header { margin-bottom: 56px; }
+
+  /* ── IMPACT STATS ── */
+  .impact { background: var(--forest); }
+  .impact .section-title { color: var(--cream); }
+  .impact .section-label { color: #7EC87F; }
+  .impact .section-sub { color: rgba(247,241,232,0.65); }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 2px;
+    background: rgba(255,255,255,0.08);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-top: 16px;
+  }
+  .stat-card {
+    background: rgba(44,95,46,0.6);
+    padding: 40px 32px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: var(--font-head);
+    font-size: 52px;
+    font-weight: 700;
+    color: #7EC87F;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .stat-desc {
+    font-size: 14px;
+    color: rgba(247,241,232,0.70);
+    font-weight: 400;
+    line-height: 1.5;
+  }
+  .outcome-note {
+    margin-top: 28px;
+    text-align: center;
+    font-size: 12px;
+    color: rgba(247,241,232,0.40);
+    letter-spacing: .04em;
+  }
+
+  /* ── PETS ── */
+  .pets { background: var(--white); }
+  .pets-filter {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    background: var(--cream);
+    border: 1.5px solid var(--cream-dark);
+    color: var(--bark-mid);
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .18s;
+  }
+  .filter-btn.active, .filter-btn:hover {
+    background: var(--terra);
+    border-color: var(--terra);
+    color: #fff;
+  }
+  .pets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 28px;
+  }
+  .pet-card {
+    background: var(--white);
+    border: 1.5px solid var(--cream-dark);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: transform .22s, box-shadow .22s;
+    cursor: pointer;
+  }
+  .pet-card:hover { transform: translateY(-6px); box-shadow: var(--shadow); }
+  .pet-img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    display: block;
+    position: relative;
+  }
+  .pet-img-placeholder {
+    width: 100%;
+    aspect-ratio: 4/3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .pet-img-placeholder svg { opacity: .25; }
+  .pet-img-placeholder span { font-size: 13px; color: var(--bark-light); font-weight: 500; opacity: .6; }
+  .pet-badges {
+    display: flex;
+    gap: 6px;
+    padding: 14px 18px 0;
+    flex-wrap: wrap;
+  }
+  .badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: .03em;
+  }
+  .badge-green { background: var(--forest-pale); color: var(--forest); }
+  .badge-amber { background: #FEF3DC; color: #7A5210; }
+  .badge-terra { background: #FBEEE9; color: var(--terra-deep); }
+  .badge-blue { background: #E8F0FB; color: #1A4E9C; }
+  .pet-info { padding: 16px 18px 22px; }
+  .pet-name {
+    font-family: var(--font-head);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--bark);
+    margin-bottom: 4px;
+  }
+  .pet-meta {
+    font-size: 13px;
+    color: var(--bark-light);
+    margin-bottom: 14px;
+  }
+  .pet-desc {
+    font-size: 14px;
+    color: var(--bark-mid);
+    line-height: 1.6;
+    margin-bottom: 18px;
+  }
+  .pet-action {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .adopt-btn {
+    background: var(--terra);
+    color: #fff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 30px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .18s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .adopt-btn:hover { background: var(--terra-deep); }
+  .fav-btn {
+    width: 40px;
+    height: 40px;
+    border: 1.5px solid var(--cream-dark);
+    border-radius: 50%;
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color .18s, background .18s;
+  }
+  .fav-btn:hover { border-color: var(--terra); background: #FBEEE9; }
+  .fav-btn svg { width: 17px; height: 17px; stroke: var(--bark-light); fill: none; transition: stroke .18s; }
+  .fav-btn:hover svg { stroke: var(--terra); }
+
+  /* ── GIVE ── */
+  .give {
+    background: var(--cream);
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .give-visual {
+    background: linear-gradient(145deg, var(--bark) 0%, #5A3520 100%);
+    border-radius: var(--radius-lg);
+    padding: 48px 40px;
+    color: var(--cream);
+  }
+  .give-visual-title {
+    font-family: var(--font-head);
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 32px;
+  }
+  .give-visual-title em { color: var(--terra-light); font-style: italic; }
+  .impact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+  .impact-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(247,241,232,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .impact-icon svg { width: 22px; height: 22px; stroke: var(--terra-light); fill: none; stroke-width: 1.8; }
+  .impact-label { font-size: 13px; color: rgba(247,241,232,0.55); margin-bottom: 2px; }
+  .impact-val { font-size: 16px; font-weight: 500; color: var(--cream); }
+
+  .give-form-section { }
+  .give-tabs {
+    display: flex;
+    background: var(--cream-dark);
+    border-radius: 40px;
+    padding: 4px;
+    margin-bottom: 28px;
+    width: fit-content;
+  }
+  .give-tab {
+    padding: 9px 24px;
+    border-radius: 36px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--bark-mid);
+    font-family: var(--font-body);
+    transition: all .18s;
+  }
+  .give-tab.active {
+    background: var(--white);
+    color: var(--bark);
+    box-shadow: 0 2px 8px rgba(58,44,34,0.10);
+  }
+  .amounts-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .amount-btn {
+    border: 1.5px solid var(--cream-dark);
+    background: var(--white);
+    color: var(--bark);
+    padding: 12px 8px;
+    border-radius: var(--radius);
+    font-family: var(--font-head);
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .18s;
+    text-align: center;
+  }
+  .amount-btn.active, .amount-btn:hover {
+    border-color: var(--terra);
+    background: #FBEEE9;
+    color: var(--terra-deep);
+  }
+  .amount-note {
+    font-size: 12px;
+    color: var(--bark-light);
+    display: block;
+    font-weight: 400;
+    font-family: var(--font-body);
+    margin-top: 2px;
+  }
+  .custom-input {
+    width: 100%;
+    border: 1.5px solid var(--cream-dark);
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: var(--bark);
+    margin-bottom: 20px;
+    outline: none;
+    transition: border-color .18s;
+  }
+  .custom-input:focus { border-color: var(--terra); }
+  .donate-cta {
+    width: 100%;
+    background: var(--terra);
+    color: #fff;
+    border: none;
+    border-radius: 40px;
+    padding: 15px;
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .donate-cta:hover { background: var(--terra-deep); }
+  .give-trust {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--bark-light);
+  }
+  .give-trust svg { width: 14px; height: 14px; stroke: var(--forest); fill: none; }
+
+  /* ── VOLUNTEER ── */
+  .volunteer {
+    background: var(--white);
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .vol-roles {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 32px;
+  }
+  .vol-role {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: var(--cream);
+    border: 1px solid var(--cream-dark);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    cursor: pointer;
+    transition: border-color .18s, box-shadow .18s;
+  }
+  .vol-role:hover { border-color: var(--forest-light); box-shadow: 0 2px 16px rgba(44,95,46,0.08); }
+  .vol-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: var(--forest-pale);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .vol-icon svg { width: 22px; height: 22px; stroke: var(--forest); fill: none; stroke-width: 1.8; }
+  .vol-role-title { font-size: 15px; font-weight: 600; color: var(--bark); margin-bottom: 2px; }
+  .vol-role-desc { font-size: 13px; color: var(--bark-mid); }
+  .vol-count { margin-left: auto; font-size: 12px; color: var(--forest); font-weight: 600; background: var(--forest-pale); padding: 4px 10px; border-radius: 20px; }
+
+  .vol-cta-panel {
+    background: var(--forest-pale);
+    border: 1.5px solid rgba(44,95,46,0.15);
+    border-radius: var(--radius-lg);
+    padding: 40px 36px;
+    text-align: center;
+  }
+  .vol-cta-panel .section-title { font-size: 26px; }
+  .vol-cta-panel p { font-size: 15px; color: var(--bark-mid); margin: 16px 0 28px; line-height: 1.7; }
+  .btn-forest {
+    background: var(--forest);
+    color: #fff;
+    padding: 14px 32px;
+    border-radius: 40px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background .2s;
+  }
+  .btn-forest:hover { background: #1e4220; }
+
+  /* ── PROGRAMS ── */
+  .programs { background: var(--cream); }
+  .programs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+  }
+  .prog-card {
+    background: var(--white);
+    border: 1.5px solid var(--cream-dark);
+    border-radius: var(--radius-lg);
+    padding: 32px 28px;
+    transition: transform .22s;
+  }
+  .prog-card:hover { transform: translateY(-4px); }
+  .prog-icon-wrap {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .prog-icon-wrap svg { width: 26px; height: 26px; fill: none; stroke-width: 1.8; }
+  .prog-icon-wrap.terra { background: #FBEEE9; }
+  .prog-icon-wrap.terra svg { stroke: var(--terra); }
+  .prog-icon-wrap.forest { background: var(--forest-pale); }
+  .prog-icon-wrap.forest svg { stroke: var(--forest); }
+  .prog-icon-wrap.amber { background: #FEF3DC; }
+  .prog-icon-wrap.amber svg { stroke: #B07020; }
+  .prog-icon-wrap.blue { background: #E8F0FB; }
+  .prog-icon-wrap.blue svg { stroke: #1A5CB5; }
+  .prog-title { font-family: var(--font-head); font-size: 20px; font-weight: 600; color: var(--bark); margin-bottom: 10px; }
+  .prog-desc { font-size: 14px; color: var(--bark-mid); line-height: 1.65; margin-bottom: 20px; }
+  .prog-link {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--terra);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: gap .18s;
+  }
+  .prog-link:hover { gap: 10px; }
+  .prog-link svg { width: 14px; height: 14px; stroke: var(--terra); fill: none; stroke-width: 2.5; }
+
+  /* ── NPC SECTION ── */
+  .npc-section {
+    background: #0176D3;
+    padding: 72px 5%;
+    text-align: center;
+    color: #fff;
+  }
+  .npc-section h2 {
+    font-family: var(--font-head);
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .npc-section p { font-size: 16px; opacity: .75; max-width: 520px; margin: 0 auto 40px; line-height: 1.7; }
+  .npc-modules-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .npc-mod {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 40px;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .npc-mod-dot { width: 8px; height: 8px; border-radius: 50%; background: #7EC1FF; flex-shrink: 0; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--bark);
+    color: var(--cream);
+    padding: 64px 5% 40px;
+  }
+  .footer-top {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 48px;
+  }
+  .footer-brand { }
+  .footer-logo { font-family: var(--font-head); font-size: 24px; font-weight: 700; margin-bottom: 14px; }
+  .footer-tagline { font-size: 14px; color: rgba(247,241,232,0.50); line-height: 1.65; max-width: 260px; }
+  .footer-col-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--terra-light);
+    margin-bottom: 16px;
+  }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-links a {
+    text-decoration: none;
+    font-size: 14px;
+    color: rgba(247,241,232,0.55);
+    transition: color .18s;
+  }
+  .footer-links a:hover { color: var(--cream); }
+  .footer-bottom {
+    border-top: 1px solid rgba(247,241,232,0.10);
+    padding-top: 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: rgba(247,241,232,0.35);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .footer-bottom a { color: rgba(247,241,232,0.50); text-decoration: none; }
+  .charity-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 12px;
+    color: rgba(247,241,232,0.55);
+    margin-top: 20px;
+  }
+
+  /* ── ANIMATIONS ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: none; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .give, .volunteer { grid-template-columns: 1fr; gap: 48px; }
+    .footer-top { grid-template-columns: 1fr 1fr; }
+    nav { padding: 0 4%; }
+    .nav-links { gap: 20px; }
+  }
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    .hero-stats { flex-wrap: wrap; gap: 24px; }
+    .amounts-grid { grid-template-columns: repeat(2, 1fr); }
+    .footer-top { grid-template-columns: 1fr; }
+    section { padding: 64px 5%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="nav-logo-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round">
+        <path d="M10 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+        <path d="M14 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+        <path d="M4 7a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+        <path d="M20 7a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+        <path d="M12 12c-4 0-7 2.5-7 6 0 2 1.5 3 3 3h8c1.5 0 3-1 3-3 0-3.5-3-6-7-6z"/>
+      </svg>
+    </div>
+    PawRescue
+  </a>
+  <ul class="nav-links">
+    <li><a href="#pets">Find a Pet</a></li>
+    <li><a href="#volunteer">Volunteer</a></li>
+    <li><a href="#programs">Programs</a></li>
+    <li><a href="#give" class="nav-cta">Donate</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" style="padding:80px 5% 80px;">
+  <div class="hero-bg-pattern"></div>
+  <div class="hero-accent"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Animal Rescue &amp; Rehoming</div>
+    <h1>Every animal<br>deserves a <em>loving</em><br>home.</h1>
+    <p>We rescue, rehabilitate, and rehome animals in need — powered by Salesforce Nonprofit Cloud to manage every animal, donor, and volunteer with care.</p>
+    <div class="hero-actions">
+      <a href="#pets" class="btn-primary">Find Your Match →</a>
+      <a href="#give" class="btn-outline">Support Our Mission</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num" data-count="3847">3,847</div>
+        <div class="hero-stat-label">Animals Rescued</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num" data-count="2960">2,960</div>
+        <div class="hero-stat-label">Rehomed</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num" data-count="580">580+</div>
+        <div class="hero-stat-label">Volunteers</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num" data-count="92">92%</div>
+        <div class="hero-stat-label">Success Rate</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT STATS -->
+<section class="impact fade-up" id="impact">
+  <div class="section-header">
+    <div class="npc-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      NPC · Outcome Management
+    </div>
+    <div class="section-label" style="color:#7EC87F;">Our Impact This Year</div>
+    <h2 class="section-title">Numbers that tell<br>a bigger story</h2>
+    <p class="section-sub">Every metric tracked in real-time via Salesforce Nonprofit Cloud's Outcome Management module — transparent accountability to our donors and community.</p>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-num">1,240</div>
+      <div class="stat-desc">Dogs rehomed<br>this year</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">890</div>
+      <div class="stat-desc">Cats found<br>loving homes</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">320</div>
+      <div class="stat-desc">Foster families<br>active</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">£186k</div>
+      <div class="stat-desc">Donations<br>received</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">97%</div>
+      <div class="stat-desc">Donor retention<br>rate</div>
+    </div>
+  </div>
+  <p class="outcome-note">Data synced from Salesforce Nonprofit Cloud · Outcome Management · Updated daily</p>
+</section>
+
+<!-- PETS -->
+<section class="pets fade-up" id="pets">
+  <div class="section-header">
+    <div class="npc-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      NPC · Program Management
+    </div>
+    <div class="section-label">Ready for Adoption</div>
+    <h2 class="section-title">Find your perfect<br>companion</h2>
+    <p class="section-sub">Browse animals currently in our care. Each profile is managed as a Program Engagement in Salesforce Nonprofit Cloud.</p>
+  </div>
+  <div class="pets-filter">
+    <button class="filter-btn active" onclick="filterPets('all',this)">All Animals</button>
+    <button class="filter-btn" onclick="filterPets('dog',this)">Dogs</button>
+    <button class="filter-btn" onclick="filterPets('cat',this)">Cats</button>
+    <button class="filter-btn" onclick="filterPets('rabbit',this)">Small Animals</button>
+  </div>
+  <div class="pets-grid" id="petsGrid">
+
+    <!-- Pet 1 -->
+    <div class="pet-card" data-type="dog">
+      <div class="pet-img-placeholder" style="background: linear-gradient(145deg, #E8D4BC 0%, #D4B898 100%);">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="36" rx="20" ry="18" fill="#C4A07A" opacity=".5"/><circle cx="32" cy="22" r="12" fill="#C4A07A" opacity=".5"/><ellipse cx="20" cy="15" rx="7" ry="9" fill="#B08860" opacity=".5" transform="rotate(-15 20 15)"/><ellipse cx="44" cy="15" rx="7" ry="9" fill="#B08860" opacity=".5" transform="rotate(15 44 15)"/></svg>
+        <span>Photo coming soon</span>
+      </div>
+      <div class="pet-badges">
+        <span class="badge badge-green">Vaccinated</span>
+        <span class="badge badge-terra">Needs Active Home</span>
+      </div>
+      <div class="pet-info">
+        <div class="pet-name">Biscuit</div>
+        <div class="pet-meta">Golden Labrador · 3 years · Male</div>
+        <div class="pet-desc">Biscuit is a cheerful, energetic Lab who loves long walks and cuddles on the sofa. Great with children and other dogs.</div>
+        <div class="pet-action">
+          <a href="#" class="adopt-btn">Meet Biscuit</a>
+          <button class="fav-btn" title="Save">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pet 2 -->
+    <div class="pet-card" data-type="cat">
+      <div class="pet-img-placeholder" style="background: linear-gradient(145deg, #D4D8E8 0%, #B8BDD4 100%);">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="38" rx="18" ry="16" fill="#9AA4C8" opacity=".5"/><circle cx="32" cy="24" r="11" fill="#9AA4C8" opacity=".5"/><polygon points="23,16 18,6 28,13" fill="#8892B8" opacity=".6"/><polygon points="41,16 46,6 36,13" fill="#8892B8" opacity=".6"/></svg>
+        <span>Photo coming soon</span>
+      </div>
+      <div class="pet-badges">
+        <span class="badge badge-green">Neutered</span>
+        <span class="badge badge-blue">Indoor Only</span>
+      </div>
+      <div class="pet-info">
+        <div class="pet-name">Misty</div>
+        <div class="pet-meta">British Shorthair · 2 years · Female</div>
+        <div class="pet-desc">Misty is a calm, affectionate cat who loves quiet evenings and window watching. Perfect for apartment living.</div>
+        <div class="pet-action">
+          <a href="#" class="adopt-btn">Meet Misty</a>
+          <button class="fav-btn" title="Save">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pet 3 -->
+    <div class="pet-card" data-type="rabbit">
+      <div class="pet-img-placeholder" style="background: linear-gradient(145deg, #E8E4D4 0%, #D4CCBC 100%);">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="42" rx="16" ry="12" fill="#C8C0A8" opacity=".5"/><ellipse cx="32" cy="30" rx="10" ry="10" fill="#C8C0A8" opacity=".5"/><ellipse cx="25" cy="14" rx="5" ry="12" fill="#B8B0A0" opacity=".55" transform="rotate(-8 25 14)"/><ellipse cx="39" cy="14" rx="5" ry="12" fill="#B8B0A0" opacity=".55" transform="rotate(8 39 14)"/></svg>
+        <span>Photo coming soon</span>
+      </div>
+      <div class="pet-badges">
+        <span class="badge badge-amber">Bonded Pair</span>
+        <span class="badge badge-green">Vaccinated</span>
+      </div>
+      <div class="pet-info">
+        <div class="pet-name">Pepper &amp; Salt</div>
+        <div class="pet-meta">Mini Lops · 1.5 years · Pair</div>
+        <div class="pet-desc">This bonded pair are inseparable! They need a home together. Great with older children, gentle and inquisitive.</div>
+        <div class="pet-action">
+          <a href="#" class="adopt-btn">Meet the Pair</a>
+          <button class="fav-btn" title="Save">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pet 4 -->
+    <div class="pet-card" data-type="dog">
+      <div class="pet-img-placeholder" style="background: linear-gradient(145deg, #D4E0D8 0%, #B8CCBC 100%);">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="36" rx="19" ry="17" fill="#96B4A0" opacity=".5"/><circle cx="32" cy="23" r="11" fill="#96B4A0" opacity=".5"/><ellipse cx="21" cy="16" rx="6" ry="8" fill="#80A08A" opacity=".5" transform="rotate(-12 21 16)"/><ellipse cx="43" cy="16" rx="6" ry="8" fill="#80A08A" opacity=".5" transform="rotate(12 43 16)"/></svg>
+        <span>Photo coming soon</span>
+      </div>
+      <div class="pet-badges">
+        <span class="badge badge-green">Vaccinated</span>
+        <span class="badge badge-blue">Good with Cats</span>
+      </div>
+      <div class="pet-info">
+        <div class="pet-name">Rolo</div>
+        <div class="pet-meta">Border Collie Mix · 4 years · Male</div>
+        <div class="pet-desc">Smart, gentle Rolo thrives with mental stimulation. He's been trained in basic commands and loves puzzle toys.</div>
+        <div class="pet-action">
+          <a href="#" class="adopt-btn">Meet Rolo</a>
+          <button class="fav-btn" title="Save">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pet 5 -->
+    <div class="pet-card" data-type="cat">
+      <div class="pet-img-placeholder" style="background: linear-gradient(145deg, #E8D4C8 0%, #D4C0B0 100%);">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="38" rx="18" ry="16" fill="#C4A898" opacity=".5"/><circle cx="32" cy="24" r="11" fill="#C4A898" opacity=".5"/><polygon points="23,16 18,6 28,13" fill="#B49888" opacity=".6"/><polygon points="41,16 46,6 36,13" fill="#B49888" opacity=".6"/></svg>
+        <span>Photo coming soon</span>
+      </div>
+      <div class="pet-badges">
+        <span class="badge badge-terra">Senior Cat</span>
+        <span class="badge badge-green">Microchipped</span>
+      </div>
+      <div class="pet-info">
+        <div class="pet-name">Chester</div>
+        <div class="pet-meta">Tabby · 9 years · Male</div>
+        <div class="pet-desc">Chester is a dignified elder gentleman who wants nothing more than a warm lap and a quiet house. A true companion.</div>
+        <div class="pet-action">
+          <a href="#" class="adopt-btn">Meet Chester</a>
+          <button class="fav-btn" title="Save">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pet 6 -->
+    <div class="pet-card" data-type="dog">
+      <div class="pet-img-placeholder" style="background: linear-gradient(145deg, #E4D4E4 0%, #CCC0D0 100%);">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="36" rx="20" ry="18" fill="#B8A8C0" opacity=".5"/><circle cx="32" cy="22" r="12" fill="#B8A8C0" opacity=".5"/><ellipse cx="20" cy="15" rx="7" ry="9" fill="#A898B0" opacity=".5" transform="rotate(-15 20 15)"/><ellipse cx="44" cy="15" rx="7" ry="9" fill="#A898B0" opacity=".5" transform="rotate(15 44 15)"/></svg>
+        <span>Photo coming soon</span>
+      </div>
+      <div class="pet-badges">
+        <span class="badge badge-amber">First-Time Friendly</span>
+        <span class="badge badge-green">Spayed</span>
+      </div>
+      <div class="pet-info">
+        <div class="pet-name">Luna</div>
+        <div class="pet-meta">Whippet Cross · 2 years · Female</div>
+        <div class="pet-desc">Luna is gentle and sweet, perfect for first-time dog owners. She loves snuggling and short, peaceful walks.</div>
+        <div class="pet-action">
+          <a href="#" class="adopt-btn">Meet Luna</a>
+          <button class="fav-btn" title="Save">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- GIVE -->
+<section class="give fade-up" id="give" style="padding:96px 5%;">
+  <div class="give-visual">
+    <div class="npc-badge" style="background:rgba(255,255,255,0.18); color:#fff;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      NPC · Fundraising Management
+    </div>
+    <p class="give-visual-title">Your donation directly<br>funds <em>animal care</em> &amp; rescue</p>
+    <div class="impact-item">
+      <div class="impact-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 3h18v18H3z" stroke-linecap="round"/><path d="M3 9h18M9 21V9"/></svg>
+      </div>
+      <div>
+        <div class="impact-label">£10/month covers</div>
+        <div class="impact-val">Food &amp; bedding for one cat</div>
+      </div>
+    </div>
+    <div class="impact-item">
+      <div class="impact-icon">
+        <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </div>
+      <div>
+        <div class="impact-label">£25/month covers</div>
+        <div class="impact-val">Vet check-up for a rescued dog</div>
+      </div>
+    </div>
+    <div class="impact-item">
+      <div class="impact-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      </div>
+      <div>
+        <div class="impact-label">£50/month covers</div>
+        <div class="impact-val">Full rehabilitation programme</div>
+      </div>
+    </div>
+    <div class="charity-badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      Registered Charity · No. 12345678
+    </div>
+  </div>
+  <div class="give-form-section">
+    <div class="npc-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      NPC · Giving Pages
+    </div>
+    <div class="section-label">Support the Mission</div>
+    <h2 class="section-title">Make a donation<br>today</h2>
+    <p class="section-sub" style="margin-bottom:32px;">Every pound goes directly to the animals. Manage your giving anytime through your donor portal.</p>
+
+    <div class="give-tabs">
+      <button class="give-tab active" onclick="setTab('one',this)">One-time</button>
+      <button class="give-tab" onclick="setTab('monthly',this)">Monthly</button>
+    </div>
+
+    <div class="amounts-grid">
+      <button class="amount-btn" onclick="selectAmount(this)">£10<span class="amount-note">Bedding</span></button>
+      <button class="amount-btn active" onclick="selectAmount(this)">£25<span class="amount-note">Vet care</span></button>
+      <button class="amount-btn" onclick="selectAmount(this)">£50<span class="amount-note">Rehab</span></button>
+      <button class="amount-btn" onclick="selectAmount(this)">£100<span class="amount-note">Full stay</span></button>
+    </div>
+
+    <input type="text" class="custom-input" placeholder="Or enter a custom amount (£)" id="customAmount">
+    <button class="donate-cta" onclick="handleDonate()">Donate Securely →</button>
+    <div class="give-trust">
+      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Payments secured via Stripe · Gift Aid eligible
+    </div>
+  </div>
+</section>
+
+<!-- VOLUNTEER -->
+<section class="volunteer fade-up" id="volunteer">
+  <div>
+    <div class="npc-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      NPC · Volunteer Management
+    </div>
+    <div class="section-label">Get Involved</div>
+    <h2 class="section-title">Volunteer with<br>PawRescue</h2>
+    <p class="section-sub">Our volunteers are managed through Salesforce Nonprofit Cloud's Volunteer Management module — track your hours, shifts, and impact all in one place.</p>
+
+    <div class="vol-roles">
+      <div class="vol-role">
+        <div class="vol-icon">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <div>
+          <div class="vol-role-title">Foster Carer</div>
+          <div class="vol-role-desc">Provide a temporary home while animals await adoption</div>
+        </div>
+        <div class="vol-count">48 spots</div>
+      </div>
+      <div class="vol-role">
+        <div class="vol-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        </div>
+        <div>
+          <div class="vol-role-title">Dog Walker</div>
+          <div class="vol-role-desc">Help our dogs get their daily exercise and socialisation</div>
+        </div>
+        <div class="vol-count">Flexible</div>
+      </div>
+      <div class="vol-role">
+        <div class="vol-icon">
+          <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.36 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.75a16 16 0 0 0 6 6l.86-.86a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.5 16"/></svg>
+        </div>
+        <div>
+          <div class="vol-role-title">Adoption Counsellor</div>
+          <div class="vol-role-desc">Guide families through the adoption process with care</div>
+        </div>
+        <div class="vol-count">12 open</div>
+      </div>
+      <div class="vol-role">
+        <div class="vol-icon">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div>
+          <div class="vol-role-title">Fundraising Support</div>
+          <div class="vol-role-desc">Organise events and campaigns to raise vital funds</div>
+        </div>
+        <div class="vol-count">Always open</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="vol-cta-panel">
+    <svg width="52" height="52" viewBox="0 0 52 52" fill="none" style="margin-bottom:16px"><circle cx="26" cy="26" r="26" fill="#EAF2EA"/><path d="M26 14c-5 0-9 3.5-9 8 0 5.5 9 16 9 16s9-10.5 9-16c0-4.5-4-8-9-8z" fill="none" stroke="#2C5F2E" stroke-width="2" stroke-linejoin="round"/><circle cx="26" cy="22" r="3" fill="#2C5F2E"/></svg>
+    <h3 class="section-title" style="font-size:24px; margin-bottom:12px;">Ready to make<br>a difference?</h3>
+    <p>Join 580+ volunteers who give their time to help animals find loving homes. Register once; our Salesforce system manages your schedule, DBS checks, and hours automatically.</p>
+    <a href="#" class="btn-forest">Become a Volunteer</a>
+    <div style="margin-top:24px; font-size:13px; color:var(--bark-mid);">
+      Already a volunteer? <a href="#" style="color:var(--forest); font-weight:600;">Log in to your portal →</a>
+    </div>
+  </div>
+</section>
+
+<!-- PROGRAMS -->
+<section class="programs fade-up" id="programs">
+  <div class="section-header">
+    <div class="npc-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      NPC · Program Management
+    </div>
+    <div class="section-label">What We Do</div>
+    <h2 class="section-title">Our rescue programs</h2>
+    <p class="section-sub">Every program in our Salesforce Nonprofit Cloud instance tracks beneficiaries, goals, and outcomes — ensuring every animal gets the right care.</p>
+  </div>
+  <div class="programs-grid">
+    <div class="prog-card">
+      <div class="prog-icon-wrap terra">
+        <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </div>
+      <div class="prog-title">Emergency Rescue</div>
+      <div class="prog-desc">24/7 rapid response for animals in immediate danger. Each case opened as a Service Delivery record in Nonprofit Cloud with full care tracking.</div>
+      <a href="#" class="prog-link">Learn more <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+    </div>
+    <div class="prog-card">
+      <div class="prog-icon-wrap forest">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <div class="prog-title">Foster Network</div>
+      <div class="prog-desc">A managed network of 320 foster homes. Volunteer relationships tracked in Nonprofit Cloud — matching animals to compatible carers automatically.</div>
+      <a href="#" class="prog-link">Learn more <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+    </div>
+    <div class="prog-card">
+      <div class="prog-icon-wrap amber">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </div>
+      <div class="prog-title">Adoption Program</div>
+      <div class="prog-desc">From first enquiry to forever home — the full journey managed as a Program Engagement with milestones, home visits, and post-adoption follow-ups.</div>
+      <a href="#" class="prog-link">Learn more <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+    </div>
+    <div class="prog-card">
+      <div class="prog-icon-wrap blue">
+        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12"/><path d="M1 1l22 22"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 5a10.94 10.94 0 0 0-1.956 5.308"/><path d="M10.71 5.05A16 16 0 0 1 22.56 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/></svg>
+      </div>
+      <div class="prog-title">Community Outreach</div>
+      <div class="prog-desc">Education visits, welfare clinics, and awareness campaigns. Tracked through Campaign Management in Nonprofit Cloud with full attribution reporting.</div>
+      <a href="#" class="prog-link">Learn more <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- NPC SHOWCASE -->
+<div class="npc-section">
+  <h2>Powered by Salesforce Nonprofit Cloud</h2>
+  <p>Every interaction — donation, adoption, volunteer shift, outcome — flows through a unified Salesforce Nonprofit Cloud instance, giving us a 360° view of our mission impact.</p>
+  <div class="npc-modules-grid">
+    <div class="npc-mod"><div class="npc-mod-dot"></div>Constituent Management</div>
+    <div class="npc-mod"><div class="npc-mod-dot"></div>Fundraising &amp; Giving Pages</div>
+    <div class="npc-mod"><div class="npc-mod-dot"></div>Program Management</div>
+    <div class="npc-mod"><div class="npc-mod-dot"></div>Volunteer Management</div>
+    <div class="npc-mod"><div class="npc-mod-dot"></div>Outcome Management</div>
+    <div class="npc-mod"><div class="npc-mod-dot"></div>Case Management</div>
+    <div class="npc-mod"><div class="npc-mod-dot"></div>Campaign Management</div>
+    <div class="npc-mod"><div class="npc-mod-dot"></div>Donor Portal (Experience Cloud)</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-logo">🐾 PawRescue</div>
+      <p class="footer-tagline">Dedicated to rescuing, rehabilitating, and rehoming animals in need. Every life matters.</p>
+      <div class="charity-badge">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Registered Charity · No. 12345678
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Find a Pet</div>
+      <ul class="footer-links">
+        <li><a href="#">Dogs for Adoption</a></li>
+        <li><a href="#">Cats for Adoption</a></li>
+        <li><a href="#">Small Animals</a></li>
+        <li><a href="#">Foster a Pet</a></li>
+        <li><a href="#">Rehoming Advice</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Get Involved</div>
+      <ul class="footer-links">
+        <li><a href="#">Volunteer</a></li>
+        <li><a href="#">Donate</a></li>
+        <li><a href="#">Fundraise</a></li>
+        <li><a href="#">Corporate Partners</a></li>
+        <li><a href="#">Leave a Legacy</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">About</div>
+      <ul class="footer-links">
+        <li><a href="#">Our Mission</a></li>
+        <li><a href="#">Annual Report</a></li>
+        <li><a href="#">Our Team</a></li>
+        <li><a href="#">Contact Us</a></li>
+        <li><a href="#">Press</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 PawRescue Charitable Trust. All rights reserved.</span>
+    <span><a href="#">Privacy Policy</a> · <a href="#">Terms</a> · <a href="#">Cookie Settings</a></span>
+  </div>
+</footer>
+
+<script>
+  function filterPets(type, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.pet-card').forEach(card => {
+      const show = type === 'all' || card.dataset.type === type;
+      card.style.display = show ? 'block' : 'none';
+    });
+  }
+
+  function setTab(type, btn) {
+    document.querySelectorAll('.give-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function selectAmount(btn) {
+    document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('customAmount').value = '';
+  }
+
+  function handleDonate() {
+    const active = document.querySelector('.amount-btn.active');
+    const custom = document.getElementById('customAmount').value;
+    const amount = custom || (active ? active.textContent.trim().split('\n')[0] : '£25');
+    const tab = document.querySelector('.give-tab.active').textContent.trim();
+    alert(`Thank you! Processing your ${tab.toLowerCase()} donation of ${amount}.\n\nIn a live implementation, this would open a Salesforce Giving Page checkout flow.`);
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

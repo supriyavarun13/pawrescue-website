@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thank You — PawRescue</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: #F7F1E8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 56px 48px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 4px 32px rgba(58,44,34,0.08);
+    }
+
+    .paw {
+      font-size: 58px;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #EAF2EA;
+      color: #1A7A40;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 30px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 32px;
+      color: #3A2C22;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .message {
+      font-size: 16px;
+      color: #6B5144;
+      line-height: 1.75;
+      margin-bottom: 32px;
+      font-weight: 300;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #EDE4D4;
+      margin: 28px 0;
+    }
+
+    .impact-note {
+      background: #F7F1E8;
+      border-radius: 12px;
+      padding: 18px 20px;
+      font-size: 14px;
+      color: #6B5144;
+      line-height: 1.65;
+      margin-bottom: 28px;
+    }
+
+    .impact-note strong {
+      color: #3A2C22;
+      font-weight: 600;
+    }
+
+    .btn-home {
+      display: inline-block;
+      background: #C04D26;
+      color: #fff;
+      padding: 14px 36px;
+      border-radius: 40px;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+      transition: background .2s;
+    }
+
+    .btn-home:hover { background: #8B3418; }
+
+    .ref {
+      margin-top: 24px;
+      font-size: 12px;
+      color: #A08878;
+    }
+
+    .ref code {
+      font-family: 'DM Mono', monospace;
+      background: #F7F1E8;
+      padding: 2px 8px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+
+    <span class="paw">🐾</span>
+    <div class="tag" id="donationType">One-time donation</div>
+
+    <h1 id="headline">Thank you so much!</h1>
+
+    <p class="message" id="message">
+      Your donation is already making a real difference to animals in our care.
+      A receipt has been sent to your email address.
+    </p>
+
+    <div class="impact-note" id="impactNote">
+      <strong>What happens next?</strong><br>
+      Your gift goes directly toward food, veterinary care, and rehabilitation
+      for animals waiting for their forever home.
+    </div>
+
+    <a href="/" class="btn-home">Back to PawRescue →</a>
+
+    <p class="ref" id="ref"></p>
+
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const type      = params.get('type');
+    const sessionId = params.get('session_id');
+
+    if (type === 'monthly') {
+      document.getElementById('donationType').textContent = 'Monthly gift';
+      document.getElementById('donationType').style.background = '#EBF2FF';
+      document.getElementById('donationType').style.color = '#1A6BDC';
+      document.getElementById('headline').textContent = 'You\'re a monthly hero!';
+      document.getElementById('message').textContent =
+        'Your monthly gift has been set up. Every month you\'ll be helping us rescue and rehome animals in need. Thank you from all of us — and our residents!';
+      document.getElementById('impactNote').innerHTML =
+        '<strong>Your monthly gift means:</strong><br>We can plan ahead, book vet appointments, and commit to caring for more animals because we know you\'re there every month.';
+    }
+
+    if (sessionId) {
+      document.getElementById('ref').innerHTML =
+        'Your reference: <code>' + sessionId.slice(-10).toUpperCase() + '</code>';
+    }
+  </script>
+</body>
+</html>
